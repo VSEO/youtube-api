@@ -4,7 +4,7 @@ Resources:
     Properties:
       ImageId: ami-27d6e626
       InstanceType: t2.micro
-      KeyName: ProductionKeyPair
+      KeyName: USER
       SourceDestCheck: false
       NetworkInterfaces:
         - GroupSet:

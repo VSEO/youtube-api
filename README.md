@@ -1,6 +1,6 @@
-# Api Template
+# Youtube API
 ## Description
-Api template for development
+backend of youtube trend search system
 
 ## Dependencies
 * [docker](https://www.docker.com/): container (a standardized unit of software) manager.
@@ -16,3 +16,8 @@ $ cd docker
 $ docker-compose up -d
 ```
 
+## Usage
+
+```bash
+$ yarn dev
+```
