@@ -66,7 +66,7 @@ export class YoutubeService {
 
   private buildParams<T>(params: T): T {
     return Object.assign({
-      key: this.configService.get('google.api.key'),
+      key: this.configService.get('youtube.api.key'),
       hl: 'ja',
       maxResults: 50
     }, params)

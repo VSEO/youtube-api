@@ -5,6 +5,6 @@ mysql:
   username: MASTER_USERNAME
   password: MASTER_USER_PASSWORD
   database: DB_NAME
-google:
+youtube:
   api:
-    key: GOOGLE_API_KEY
+    key: YOUTUBE_API_KEY
