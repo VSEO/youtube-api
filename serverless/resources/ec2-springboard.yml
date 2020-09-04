@@ -1,0 +1,20 @@
+Resources:
+  ProductionSpringboardInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: ami-27d6e626
+      InstanceType: t2.micro
+      KeyName: ProductionKeyPair
+      SourceDestCheck: false
+      NetworkInterfaces:
+        - GroupSet:
+            - !Ref ProductionSpringboardSecurityGroup
+          PrivateIpAddresses:
+            - Primary: true
+              PrivateIpAddress: ${self:custom.definitions.ec2.springboard.eth0.privateIpAddresses.primary}
+          AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          SubnetId: !Ref ProductionPublicSubnet
+      Tags:
+        - Key: Name
+          Value: ProductionSpringboardInstance

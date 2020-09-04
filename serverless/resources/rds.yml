@@ -1,0 +1,32 @@
+Resources:
+  ProductionRDSSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: DBSubnetGroup for Production RDS
+      SubnetIds:
+        - !Ref ProductionBackendPrivateSubnetA
+        - !Ref ProductionBackendPrivateSubnetB
+      Tags:
+        - Key: Name
+          Value: ProductionRDSSubnetGroup
+  ProductionRDSInstance:
+    DependsOn: ProductionRDSSecurityGroup
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: ${self:custom.definitions.rds.allocatedStorage}
+      AutoMinorVersionUpgrade: true
+      AvailabilityZone: ${self:custom.definitions.rds.availabilityZone}
+      DBInstanceIdentifier: ${self:custom.definitions.rds.dBInstanceIdentifier}
+      DBInstanceClass: ${self:custom.definitions.rds.dBInstanceClass}
+      DBName: ${self:custom.definitions.rds.dbName}
+      Engine: ${self:custom.definitions.rds.engine}
+      EngineVersion: ${self:custom.definitions.rds.engineVersion}
+      MasterUsername: ${self:custom.definitions.rds.masterUsername}
+      MasterUserPassword: ${self:custom.definitions.rds.masterUserPassword}
+      PubliclyAccessible: false
+      VPCSecurityGroups:
+        - "Fn::GetAtt": ProductionRDSSecurityGroup.GroupId
+      DBSubnetGroupName: !Ref ProductionRDSSubnetGroup
+      Tags:
+        - Key: Name
+          Value: ProductionRDSInstance

@@ -1,0 +1,61 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - run: pip3 install awscli
+
+      - name: Setup node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - name: Get yarn cache
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache node modules
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Build
+        run: yarn build
+        env:
+          NODE_ENV: production
+
+      - name: Configure aws-cli
+        run: yarn sls:config
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          NODE_ENV: production
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          MASTER_USERNAME: ${{ secrets.MASTER_USERNAME }}
+          MASTER_USER_PASSWORD: ${{ secrets.MASTER_USER_PASSWORD }}
+      - name: Deploy
+        run: yarn sls:deploy
+        env:
+          NODE_ENV: production
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          MASTER_USERNAME: ${{ secrets.MASTER_USERNAME }}
+          MASTER_USER_PASSWORD: ${{ secrets.MASTER_USER_PASSWORD }}

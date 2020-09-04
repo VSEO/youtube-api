@@ -1,0 +1,50 @@
+Resources:
+  ProductionBackendSecurityGroup:
+    DependsOn: ProductionVPC
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SecurityGroup for Backend Lambda Functions
+      VpcId: !Ref ProductionVPC
+      Tags:
+        - Key: Name
+          Value: ProductionBackendSecurityGroup
+  ProductionSpringboardSecurityGroup:
+    DependsOn: ProductionVPC
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SecurityGroup for Production Springboard
+      VpcId: !Ref ProductionVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref ProductionBackendSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          SourceSecurityGroupId: !Ref ProductionBackendSecurityGroup
+      Tags:
+        - Key: Name
+          Value: ProductionSpringboardSecurityGroup
+  ProductionRDSSecurityGroup:
+    DependsOn: ProductionVPC
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SecurityGroup for Production RDS
+      VpcId: !Ref ProductionVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref ProductionBackendSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref ProductionSpringboardSecurityGroup
+      Tags:
+        - Key: Name
+          Value: ProductionRDSSecurityGroup

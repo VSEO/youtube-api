@@ -1,0 +1,17 @@
+auth:
+  secret: JWT_SECRET
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  username: root
+  password: root
+  database: develop
+  synchronize: false
+  logging: true
+google:
+  api:
+    key: GOOGLE_API_KEY
+endpoint:
+  frontend: http://localhost:3000
+  backend: http://localhost:8080
+  google: https://www.google.com

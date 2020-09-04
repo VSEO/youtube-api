@@ -1,0 +1,10 @@
+auth:
+  secret: JWT_SECRET
+mysql:
+  host: DB_HOST
+  username: MASTER_USERNAME
+  password: MASTER_USER_PASSWORD
+  database: DB_NAME
+google:
+  api:
+    key: GOOGLE_API_KEY

@@ -1,0 +1,6 @@
+mysql:
+  synchronize: false
+  logging: false
+endpoint:
+  frontend: https//youtube.playgrounds.tech
+  backend: https://api.youtube.playgrounds.tech

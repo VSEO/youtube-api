@@ -1,0 +1,12 @@
+Resources:
+  ProductionInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: ProductionInternetGateway
+  ProductionVPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref ProductionVPC
+      InternetGatewayId: !Ref ProductionInternetGateway

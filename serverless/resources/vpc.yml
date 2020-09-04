@@ -1,0 +1,10 @@
+Resources:
+  ProductionVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: ${self:custom.definitions.vpc.cidrBlock}
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: ProductionVPC

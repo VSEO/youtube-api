@@ -1,0 +1,144 @@
+service:
+  name: ${self:custom.definitions.name}
+
+plugins:
+  - serverless-apigw-binary
+  - serverless-plugin-warmup
+  - serverless-plugin-canary-deployments
+
+package:
+  include:
+    - dist/**
+    - config/**
+  exclude:
+    - .**
+    - .**/*
+    - '**'
+    - '**/**'
+    - '!node_modules/**'
+  excludeDevDependencies: true
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  region: ap-northeast-1
+  stage: ${opt:stage}
+  environment:
+    TZ: Asia/Tokyo
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - ec2:CreateNetworkInterface
+        - ec2:DescribeNetworkInterfaces
+        - ec2:DeleteNetworkInterface
+      Resource: "*"
+    - Effect: 'Allow'
+      Action:
+        - lambda:InvokeFunction
+      Resource:
+        - Fn::Join:
+            - ':'
+            - - arn:aws:lambda
+              - Ref: AWS::Region
+              - Ref: AWS::AccountId
+              - function:${self:service}-${opt:stage, self:provider.stage}-*
+  logRetentionInDays: 14
+
+custom:
+  definitions:
+    name: youtube-api
+    lambda:
+      serverTimeout: 30
+      jobTimeout: 900
+      memorySize: 512
+    rds:
+      allocatedStorage: 100 # 100GB
+      availabilityZone: ${self:provider.region}a
+      dBInstanceIdentifier: ${self:custom.definitions.name}-${opt:stage}
+      dBInstanceClass: db.t2.micro
+      dbName: ${env:DB_NAME}
+      engine: mysql
+      engineVersion: 8.0.16
+      masterUsername: ${env:MASTER_USERNAME}
+      masterUserPassword: ${env:MASTER_USER_PASSWORD}
+    vpc:
+      cidrBlock: 10.1.0.0/16
+    subnet:
+      publicSubnet:
+        cidrBlock: 10.1.0.0/24
+        availablityZone: ${self:provider.region}a
+      privateSubnetA:
+        cidrBlock: 10.1.10.0/24
+        availablityZone: ${self:provider.region}a
+      privateSubnetB:
+        cidrBlock: 10.1.11.0/24
+        availablityZone: ${self:provider.region}c
+    ec2:
+      springboard:
+        eth0:
+          privateIpAddresses:
+            primary: 10.1.0.200
+    environment:
+      NODE_ENV: ${env:NODE_ENV}
+      JWT_SECRET: ${env:JWT_SECRET}
+      DB_NAME: ${env:DB_NAME}
+      DB_HOST: { "Fn::GetAtt": [ ProductionRDSInstance, Endpoint.Address ]}
+      MASTER_USERNAME: ${env:MASTER_USERNAME}
+      MASTER_USER_PASSWORD: ${env:MASTER_USER_PASSWORD}
+      GOOGLE_API_KEY: ${env:GOOGLE_API_KEY}
+  apigwBinary:
+    types:
+      - '*/*'
+
+functions:
+  nest:
+    handler: dist/main.server
+    timeout: ${self:custom.definitions.lambda.serverTimeout}
+    memorySize: ${self:custom.definitions.lambda.memorySize}
+    vpc:
+      securityGroupIds:
+        - !Ref ProductionBackendSecurityGroup
+      subnetIds:
+        - !Ref ProductionBackendPrivateSubnetA
+        - !Ref ProductionBackendPrivateSubnetB
+    environment: ${self:custom.definitions.environment}
+    warmup:
+      enabled: true
+    events:
+      - http:
+          path: '/'
+          method: any
+      - http:
+          path: '{proxy+}'
+          method: any
+    deploymentSettings:
+      type: AllAtOnce
+      alias: Live
+  job:
+    handler: dist/main.job
+    timeout: ${self:custom.definitions.lambda.jobTimeout}
+    memorySize: ${self:custom.definitions.lambda.memorySize}
+    vpc:
+      securityGroupIds:
+        - !Ref ProductionBackendSecurityGroup
+      subnetIds:
+        - !Ref ProductionBackendPrivateSubnetA
+        - !Ref ProductionBackendPrivateSubnetB
+    environment: ${self:custom.definitions.environment}
+    events:
+      - schedule:
+          rate: cron(0 17 * * ? *) # utc
+          input:
+            name: scrape
+    deploymentSettings:
+      type: AllAtOnce
+      alias: Live
+
+resources:
+  - ${file(./serverless/resources/vpc.yml)}
+  - ${file(./serverless/resources/internet-gateway.yml)}
+  - ${file(./serverless/resources/subnet.yml)}
+  - ${file(./serverless/resources/route-table.yml)}
+  - ${file(./serverless/resources/security-group.yml)}
+  - ${file(./serverless/resources/ec2-springboard.yml)}
+  - ${file(./serverless/resources/rds.yml)}

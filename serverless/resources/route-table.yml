@@ -1,0 +1,44 @@
+Resources:
+  ProductionBackendRouteTable:
+    DependsOn: ProductionVPC
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref ProductionVPC
+      Tags:
+        - Key: Name
+          Value: ProductionBackendRouteTable
+  ProductionBackendRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref ProductionBackendRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      InstanceId : !Ref ProductionSpringboardInstance
+  ProductionBackendSubnetARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref ProductionBackendPrivateSubnetA
+      RouteTableId: !Ref ProductionBackendRouteTable
+  ProductionBackendSubnetBRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref ProductionBackendPrivateSubnetB
+      RouteTableId: !Ref ProductionBackendRouteTable
+  ProductionSpringboardRouteTable:
+    DependsOn: ProductionVPC
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref ProductionVPC
+      Tags:
+        - Key: Name
+          Value: ProductionSpringboardRouteTable
+  ProductionSpringboardRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref ProductionSpringboardRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId : !Ref ProductionInternetGateway
+  ProductionSpringboardSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref ProductionPublicSubnet
+      RouteTableId: !Ref ProductionSpringboardRouteTable

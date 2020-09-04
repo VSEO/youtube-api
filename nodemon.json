@@ -1,0 +1,8 @@
+{
+  "watch": ["config", "src"],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "ts,yml",
+  "exec": "ts-node -r tsconfig-paths/register ./src/main.ts"
+}
