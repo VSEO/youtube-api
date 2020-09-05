@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Query } from '@nestjs/common'
+import { Controller, Get, Query, UseGuards } from '@nestjs/common'
+import { AuthGuard } from '@guards/auth.guard'
 import { VideoSearchDto } from '@modules/videos/dto/video-search.dto'
 import { VideosService } from '@modules/videos/videos.service'
 
 @Controller('videos')
+@UseGuards(AuthGuard)
 export class VideosController {
   constructor(private readonly service: VideosService) {}
 
@@ -14,8 +16,8 @@ export class VideosController {
   public suggest(@Query() dto: VideoSearchDto): Promise<object> {
     return this.service.suggest(dto)
   }
-  @Post('scrape')
-  public async scrape(): Promise<any> {
-    return await this.service.scrape()
-  }
+  // @Post('scrape')
+  // public async scrape(): Promise<any> {
+  //   return await this.service.scrape()
+  // }
 }

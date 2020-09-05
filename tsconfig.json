@@ -12,6 +12,8 @@
     "incremental": true,
     "paths": {
       "@common/*": ["./src/common/*"],
+      "@decorators/*": ["./src/decorators/*"],
+      "@guards/*": ["./src/guards/*"],
       "@filters/*": ["./src/filters/*"],
       "@interceptors/*": ["./src/interceptors/*"],
       "@middleware/*": ["./src/middleware/*"],
