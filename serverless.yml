@@ -75,6 +75,7 @@ custom:
         availablityZone: ${self:provider.region}c
     ec2:
       springboard:
+        keyName: mykeypair
         eth0:
           privateIpAddresses:
             primary: 10.1.0.200

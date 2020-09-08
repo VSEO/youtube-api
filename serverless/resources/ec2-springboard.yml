@@ -4,7 +4,7 @@ Resources:
     Properties:
       ImageId: ami-27d6e626
       InstanceType: t2.micro
-      KeyName: USER
+      KeyName: ${self:custom.definitions.ec2.springboard.keyName}
       SourceDestCheck: false
       NetworkInterfaces:
         - GroupSet:
