@@ -18,6 +18,7 @@ Resources:
       AvailabilityZone: ${self:custom.definitions.rds.availabilityZone}
       DBInstanceIdentifier: ${self:custom.definitions.rds.dBInstanceIdentifier}
       DBInstanceClass: ${self:custom.definitions.rds.dBInstanceClass}
+      DBParameterGroupName: !Ref ProductionRDSParameterGroup
       DBName: ${self:custom.definitions.rds.dbName}
       Engine: ${self:custom.definitions.rds.engine}
       EngineVersion: ${self:custom.definitions.rds.engineVersion}
