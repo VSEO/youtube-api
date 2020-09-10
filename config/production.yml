@@ -3,7 +3,7 @@ mysql:
   logging: false
 youtube:
   api:
-    total: 50
+    total: 500
 endpoint:
   frontend: https//ytsecretsearch.com
   backend: https://api.ytsecretsearch.com
