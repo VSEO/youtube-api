@@ -115,25 +115,29 @@ functions:
     deploymentSettings:
       type: AllAtOnce
       alias: Live
-#  job:
-#    handler: dist/main.job
-#    timeout: ${self:custom.definitions.lambda.jobTimeout}
-#    memorySize: ${self:custom.definitions.lambda.memorySize}
-#    vpc:
-#      securityGroupIds:
-#        - !Ref ProductionBackendSecurityGroup
-#      subnetIds:
-#        - !Ref ProductionBackendPrivateSubnetA
-#        - !Ref ProductionBackendPrivateSubnetB
-#    environment: ${self:custom.definitions.environment}
-#    events:
-#      - schedule:
-#          rate: cron(0 17 * * ? *) # utc
-#          input:
-#            name: scrape
-#    deploymentSettings:
-#      type: AllAtOnce
-#      alias: Live
+  job:
+    handler: dist/main.job
+    timeout: ${self:custom.definitions.lambda.jobTimeout}
+    memorySize: ${self:custom.definitions.lambda.memorySize}
+    vpc:
+      securityGroupIds:
+        - !Ref ProductionBackendSecurityGroup
+      subnetIds:
+        - !Ref ProductionBackendPrivateSubnetA
+        - !Ref ProductionBackendPrivateSubnetB
+    environment: ${self:custom.definitions.environment}
+    events:
+      - schedule:
+          rate: cron(0 15 * * ? *) # utc
+          input:
+            name: queue
+      - schedule:
+          rate: cron(0/15 1 * * ? *) # utc
+          input:
+            name: scrape
+    deploymentSettings:
+      type: AllAtOnce
+      alias: Live
 
 resources:
   - ${file(./serverless/resources/vpc.yml)}

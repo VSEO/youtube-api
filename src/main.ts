@@ -60,6 +60,11 @@ export const job: Handler = (event: any, context: Context) => {
     try {
       const videosService = app.select(VideosModule).get(VideosService)
       switch (true) {
+        case event?.name === 'queue': {
+          console.log('Job: queue job processes.')
+          await videosService.queue()
+          break
+        }
         case event?.name === 'scrape': {
           console.log('Job: scrape job processes.')
           await videosService.scrape()

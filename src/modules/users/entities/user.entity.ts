@@ -22,7 +22,7 @@ export class User extends BaseEntity {
   id: string
   @Column({ type: 'varchar', length: 255 })
   password: string
-  @Column({ type: 'tinyint', default: Role.USER })
+  @Column({ type: 'enum', enum: Role, default: Role.USER })
   role: Role
   @Column({ type: 'tinyint', default: false, select: false })
   deleted: boolean

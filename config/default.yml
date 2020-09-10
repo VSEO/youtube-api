@@ -11,6 +11,7 @@ mysql:
 youtube:
   api:
     key: YOUTUBE_API_KEY
+    total: 50
 endpoint:
   frontend: http://localhost:3000
   backend: http://localhost:8080

@@ -1,6 +1,9 @@
 mysql:
   synchronize: false
   logging: false
+youtube:
+  api:
+    total: 50
 endpoint:
   frontend: https//ytsecretsearch.com
   backend: https://api.ytsecretsearch.com
