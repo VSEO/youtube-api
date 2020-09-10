@@ -45,7 +45,7 @@ export class VideoScrapeQueue extends BaseEntity {
     const raw = await VideoScrapeQueue
       .query(query + ' FOR UPDATE SKIP LOCKED', params)
       .then(data => data?.[0])
-    return this.load(raw.scheduledDate, raw.videoCategoryId)
+    return raw ? this.load(raw.scheduledDate, raw.videoCategoryId) : undefined
   }
 
   public static registerBulk(dto: VideoScrapeQueueRegisterBulkDto): Promise<any> {

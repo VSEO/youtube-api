@@ -27,7 +27,8 @@ export class VideoRegisterDto {
       },
       liveBroadcastContent: this.item.snippet.liveBroadcastContent as VideoLiveBroadcastContent,
       publishedAt: new Date(this.item.snippet.publishedAt),
-      videoCategory: this.videoCategory
+      videoCategory: this.videoCategory,
+      videoStatistics: []
     })
   }
 }
