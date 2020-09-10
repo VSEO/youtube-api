@@ -30,3 +30,10 @@ Resources:
       Tags:
         - Key: Name
           Value: ProductionRDSInstance
+  ProductionRDSParameterGroup:
+    Type: AWS::RDS::DBParameterGroup
+    Properties:
+      Description: Cloudformation parameter group for mysql8.0
+      Family: mysql8.0
+      Parameters:
+        time_zone: Asia/Tokyo
