@@ -60,6 +60,9 @@ export class YoutubeService {
 
       pageToken = searchData.nextPageToken
       data.push(...videoData.items)
+
+      // sleep 1 sec
+      await new Promise((resolve, _) => setTimeout(() => resolve(), 1000))
     }
     return data
   }
