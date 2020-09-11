@@ -44,8 +44,9 @@ export class YoutubeService {
     let pageToken = undefined
 
     const data = []
-    while(total > data.length) {
-      console.log(`Call Youtube Data API: search and videos. total = ${total}, progress = ${data.length}`)
+    while(pageToken !== 'undefined' || total > data.length) {
+      // eslint-disable-next-line max-len
+      console.log(`Call Youtube Data API: search and videos. videoCategoryId = ${params.videoCategoryId}, total = ${total}, progress = ${data.length}`)
 
       const searchData = await this.search(Object.assign({
         part: ['id'],
@@ -53,13 +54,14 @@ export class YoutubeService {
         regionCode: 'JP',
         pageToken
       }, params))
-      const videoData = await this.videos(Object.assign({
-        part: ['id', 'snippet', 'statistics'],
-        id: searchData.items.map(i => i.id.videoId),
-      }, params))
-
-      pageToken = searchData.nextPageToken
-      data.push(...videoData.items)
+      if (searchData?.items?.length > 0) {
+        const videoData = await this.videos(Object.assign({
+          part: ['id', 'snippet', 'statistics'],
+          id: searchData.items.map(i => i.id.videoId),
+        }, params))
+        data.push(...videoData.items)
+      }
+      pageToken = searchData.nextPageToken || 'undefined'
 
       // sleep 1 sec
       await new Promise((resolve, _) => setTimeout(() => resolve(), 1000))
