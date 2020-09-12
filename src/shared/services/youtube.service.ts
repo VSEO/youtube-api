@@ -44,7 +44,7 @@ export class YoutubeService {
     let pageToken = undefined
 
     const data = []
-    while(pageToken !== 'undefined' || total > data.length) {
+    while(pageToken !== 'undefined' && total > data.length) {
       // eslint-disable-next-line max-len
       console.log(`Call Youtube Data API: search and videos. videoCategoryId = ${params.videoCategoryId}, total = ${total}, progress = ${data.length}`)
 
