@@ -132,7 +132,7 @@ functions:
           input:
             name: queue
       - schedule:
-          rate: cron(0/10 16-23 * * ? *) # utc
+          rate: cron(0/5 4-10 * * ? *) # utc
           input:
             name: scrape
     deploymentSettings:
