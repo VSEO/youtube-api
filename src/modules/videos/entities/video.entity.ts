@@ -1,5 +1,5 @@
 import {
-  BaseEntity, Between,
+  BaseEntity, Between, Brackets,
   Column,
   CreateDateColumn,
   Entity,
@@ -77,11 +77,13 @@ export class Video extends BaseEntity {
   }
   public static calcWeeklyPublishCount(dto: VideoSearchDto): Promise<number> {
     return Video.createQueryBuilder()
-      .where(qb => {
-        qb
-          .where('title LIKE :title', { title: `%${dto.keyword}%` })
-          .orWhere('description LIKE :description', { description: `%${dto.keyword}%` })
-      })
+      .where(
+        new Brackets(qb =>
+          qb
+            .where('title LIKE :title', { title: `%${dto.keyword}%` })
+            .orWhere('description LIKE :description', { description: `%${dto.keyword}%` })
+        )
+      )
       .andWhere(`published_at BETWEEN (NOW() - INTERVAL 1 WEEK) AND NOW()`)
       .getCount()
   }
@@ -93,11 +95,13 @@ export class Video extends BaseEntity {
           .select(`v.id AS id, CASE WHEN MAX(vs.viewCount) = MIN(vs.viewCount) THEN MAX(vs.viewCount) ELSE MAX(vs.viewCount) - MIN(vs.viewCount) END AS count`)
           .from(Video, 'v')
           .innerJoin('v.videoStatistics', 'vs')
-          .where(qb => {
-            qb
-              .where('v.title LIKE :title', { title: `%${dto.keyword}%` })
-              .orWhere('v.description LIKE :description', { description: `%${dto.keyword}%` })
-          })
+          .where(
+            new Brackets(qb =>
+              qb
+                .where('v.title LIKE :title', { title: `%${dto.keyword}%` })
+                .orWhere('v.description LIKE :description', { description: `%${dto.keyword}%` })
+            )
+          )
           .andWhere(`vs.date BETWEEN (NOW() - INTERVAL 1 WEEK) AND NOW()`)
           .groupBy('v.id')
         , 'gv')
